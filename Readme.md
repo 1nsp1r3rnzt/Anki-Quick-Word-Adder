@@ -4,6 +4,7 @@ Anki is a free-mium software based on the concept of spaced repetition. It accel
 
 The concept of utilizing Anki gets complicated when you encounter a difficult word while browsing on your computer. The flow is interrupted as you have to stop reading an article and add the word to Anki. This automates the process of adding work, sentence where you read the word and meaning quickly to Anki.
 Additional features include adding images related to work from two sources if available.
+![screenshot](https://raw.githubusercontent.com/1nsp1r3rnzt/Anki-Quick-Word-Adder/master/images/picture.png)
 
 
 ## Getting Started
