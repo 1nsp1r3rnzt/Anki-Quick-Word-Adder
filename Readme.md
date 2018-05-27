@@ -28,7 +28,7 @@ press <key>`</key> to run the software.
 
 ### Prerequisites
 
-Anki: [Anki Download](https://apps.ankiweb.net) 
+Anki: [Anki Download](https://apps.ankiweb.net)   
 AnkiConnect: [AnkiConnect Download]https://ankiweb.net/shared/info/2055492159
  [Oxford Dictionary API](https://developer.oxforddictionaries.com)
 
