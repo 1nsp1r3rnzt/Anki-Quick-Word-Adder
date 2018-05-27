@@ -1,4 +1,3 @@
-#Include <JSON>
 
 findLexicalId(wordoz)
 {
@@ -69,7 +68,7 @@ for key,value in JsonObject.results[1].lexicalEntries[1].entries[1].senses[2].de
 if(definationSecond)
 {
 
-Var = `n1. %definationFirst%`n2. %definationSecond%  ; Add more text to the variable via another continuation section.
+Var = <br>1. %definationFirst%<br>2. %definationSecond%  ; Add more text to the variable via another continuation section.
 (
 
 )

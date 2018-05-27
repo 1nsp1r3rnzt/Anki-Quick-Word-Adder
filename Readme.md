@@ -1,10 +1,9 @@
 
-# Anki Quick Word Adder
+# Anki Quick Word Adder (dev)
 Anki is a free-mium software based on the concept of spaced repetition. It accelerates the process of learning by helping to retain information in the long-term memory.
 
 The concept of utilizing Anki gets complicated when you encounter a difficult word while browsing on your computer. The flow is interrupted as you have to stop reading an article and add the word to Anki. This automates the process of adding the word, the sentence where you read the word quickly to Anki.
-Additional features include retreiving meaning from oxford dictionary and images related to the word from two sources if available.
-![screenshot](https://raw.githubusercontent.com/1nsp1r3rnzt/Anki-Quick-Word-Adder/master/images/picture.png)
+Additional features include retreiving meaning from oxford dictionary 
 
 
 ## Getting Started
@@ -30,12 +29,13 @@ press <key>`</key> to run the software.
 ### Prerequisites
 
 Anki: [Anki Download](https://apps.ankiweb.net) 
-
+AnkiConnect: [AnkiConnect Download]https://ankiweb.net/shared/info/2055492159
  [Oxford Dictionary API](https://developer.oxforddictionaries.com)
 
 [Google Chrome Dictionary Extension](https://chrome.google.com/webstore/detail/google-dictionary-by-goog/mgijmajocgfcbeboacabfgobmjgjcoja?hl=en) - optional
 
-
+## To Implement
+[] Add Images using AnkiConnect
 
 ## Built With
 

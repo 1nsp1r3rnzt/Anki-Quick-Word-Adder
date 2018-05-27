@@ -12,6 +12,7 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 global APP_ID:=""
 global APP_KEY:=""
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 

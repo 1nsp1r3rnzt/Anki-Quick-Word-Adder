@@ -3,21 +3,22 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 #Persistent
-
+#Include <JSON>
 #Include %A_ScriptDir%\dictApi.ahk
 #Include %A_ScriptDir%\helper\dict.ahk
 #Include %A_ScriptDir%\helper\checkUrlStatus.ahk
 #Include %A_ScriptDir%\helper\searchImageLocal.ahk
 #Include %A_ScriptDir%\helper\searchImageFlashMonkey.ahk
 #Include %A_ScriptDir%\helper\copyImage.ahk
+#Include %A_ScriptDir%\helper\ankiPy.ahk
 
 ;;;;;;;;;User settings: 0 or 1;;;;;;;;;;;
 
 ;1st image
-global ADD_IMAGES_FLASHMONKEY= 1
+global ADD_IMAGES_FLASHMONKEY= 0
 
 ;2nd image
-global ADD_IMAGES_WORDINFO = 1
+global ADD_IMAGES_WORDINFO = 0
 
 ;add quick meaning from chrome, also needs extension
 global MEANING_FROM_CHROME=1
@@ -25,7 +26,7 @@ global MEANING_FROM_CHROME=1
 
 ;;;;;;;;;;Default deck and card;;;;;;;;;;;;;;;;;;
 global CARD_TYPE = "Work Meaning Dictionary Link"
-global DECK_TYPE = "English"
+global DECK_TYPE = "Language::English"
 
 ;additional field  name
 global FIELD_WORD_NAME= "word or Hint"
@@ -36,7 +37,7 @@ global FIELD_WORD_NAME= "word or Hint"
 
 ;;;;;;Default settings: Dont change;;;;;;;
 global GET_API_LINK="https://developer.oxforddictionaries.com"
-global VERSION = "Anki QuickAdder 1.01"
+global VERSION = "Anki QuickAdder 1.02"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;global keywords: Dont Change;;;;
@@ -91,6 +92,7 @@ copyText(textword)
 		return
 	}
 	textToTrim:=clipboard
+	StringReplace, textToTrim, textToTrim, ",' , All
 	textToTrim := regexreplace(textToTrim, "^\s+") ;trim beginning whitespace
 	textToTrim := regexreplace(textToTrim, "\s+$") ;trim ending whitespace
 	%textword% := textToTrim
@@ -194,104 +196,49 @@ ButtonOK:
 	
 	if (WinExist("ahk_exe anki.exe") or WinExist("Anki - User 1"))
 	{
-		WinActivate  ; Uses the last found window.
+		;WinActivate  ; Uses the last found window.
 		
-		pasteInAnki()
+		sendToAnki()
 	}else  {
 		run, C:\Program Files (x86)\Anki\Anki.exe
 		sleep 4500
-		pasteInAnki()
+		sendToAnki()
 	}
 return
 
-pasteInAnki(){
-	global
-	IfWinExist, Add
-	{
-		WinKill ; use the window found above
-		sleep 200
-		send {escape 3}
-		send {enter}
 
-		if (WinExist("ahk_exe anki.exe") or WinExist("Anki - User 1"))
-		{
-			WinActivate  
-			sleep,2000
-		}else  {
-			run, C:\Program Files (x86)\Anki\Anki.exe
-			sleep 4500
-		}
-	}
-	
-	sleep 300
-	send {enter}
-	
-	send a
-	sleep 2000
-	
-	IfWinActive, Add
-	{
-		;select card type
-		if(CARD_TYPE=""||DECK_TYPE=""){
-			msgbox, card type or deck cant be null
-			return
+sendToAnki(){
+global
+				data = 
+				(
+				{
+			"action": "addNote",
+			"version": 6,
+			"params": {
+				"note": {
+				
+					"deckName": "%DECK_TYPE%",
+					"modelName": "%CARD_TYPE%",
+					"fields": {
+						"Front": "%MyWord%",
+						"Word": "%MyWord%",
+						"Back": "%MyMeaning%<br>%MySentence%"
+					},
+					"tags": [
+						
+					],
+					"audio": {
+					}
+				}
 			}
-		else  {
-			send ^n
-			sleep 100
-			send, %CARD_TYPE%
-			send {enter}
-			sleep 200
-			checkVisibleContentCard()
-			sleep 200
-			;select deck type
-			send ^d
-			sleep 200
-			send %DECK_TYPE%
-			sleep 200
-			send {enter}
-			checkVisibleContentDeck()
-			
 		}
-		deletewords()
-		
-		send %MyWord%
-		send {TAB}
-		sleep 300
-		deletewords()
-		send %MyWord%
-		send {TAB}
-		sleep 300
-		deletewords()
-		send %MyMeaning%{ENTER}%MySentence%
-		
-		pasteImages()
-		sleep,300
-		send {ctrl down}
-		send {enter}
-		send {ctrl up}
-		sleep 300
-		checkIfInputOK()
-		send {escape}
-		send {enter}
-		Send, {ALT DOWN}
-		sleep, 300
-		send {TAB}
-		Send, {ALT UP}
-		exit
-		
-	}
-	else  {
-		msgbox, not found, not pasting
-	}
-	return
-}
-deletewords(){
-	send ^a
-	send {BACKSPACE}
-	return
-}
+		)
+		URL := "http://127.0.0.1:8765"
+		addToAnki( URL,data, 10 )
 
+		
+		
+		}
 cleanImageFiles(){
 	If FileExist("images\image.jpg")
 	{
@@ -466,160 +413,11 @@ initApp(){
 		}
 	}
 	
-;check for API KEYS
-checkForApi()
-	return
-}
-
-checkVisibleContentDeck(){
-	sleep 500
-	WinGetText, text, A 
-	if(text="")
-	{
-		send {enter}
-		send {Tab 3}
-		
-		send {enter}
-		send %DECK_TYPE%
-		send {enter}
-	}else  {
-		return
-	}
-	return
-}
-checkVisibleContentCard(){
-	sleep 500
-	WinGetText, text, A 
-	if(text="")
-	{
-		MsgBox, 4,, Required card type not found. Do you want to create a card type of %CARD_TYPE% . Clicking No will exit App
-		IfMsgBox Yes
-		{
-			send {escape 4}
-			addCardType()
-			pasteInAnki()
-			return
-		}
-		else  {
-			exitApp
-		}
-	}
-	else  
-	{
-		return
-	}
-}
-
-addCardType(){
-	if (WinExist("ahk_exe anki.exe") or WinExist("Anki - User 1"))
-	{
-		WinActivate  
-		
-		sleep, 200
-		send ^+n
-		sleep, 200
-		send {enter}
-		sleep 200
-		send {enter}
-		sleep 200
-		sendInput %CARD_TYPE%
-		sleep 200
-		sendInput {enter}
-		send %CARD_TYPE%
-		
-		if(editCorrectNoteType(CARD_TYPE)==200)
-		{
-			addFieldTypes()
-			
-			return
-		}else  {
-			msgbox, correct note type not found, Please follow manual instructions or report bug. sorry exiting
-			exitApp
-		}
-	}else  {
-		msgbox, Anki is not running
-		return
-	}
-}
-
-editCorrectNoteType(DICT_NOTE_TYPE)
-{
-	sleep 500
-	send {Tab 2}
-	send {enter}
-	clipboard = 
-	sleep 200
 	
-	send ^c
-	clipwait, 3
-	if(clipboard==DICT_NOTE_TYPE)
-	{
-		send {esc}
-		return 200
-		
-	}
-	else  
-	{  sleep 200
-		send {enter}
-		send {shift down}
-		send {Tab 2}
-		send {shift up}
-		send {down}
-		sleep 200
-		send {Tab 2}
-		sleep 100
-		send {enter}
-		clipboard = 
-		send ^c
-		clipwait, 3
-		if(clipboard==DICT_NOTE_TYPE){
-			send {enter}
-			return 200
-		}
-		else  {
-			return 404
-		}
-	}
-}
-addFieldTypes(){
-	send {Tab 2}
-	sleep 200
-	send {enter}
-	sleep 200
-	send {enter}
-	if(FIELD_WORD_NAME=="")
-	{
-	msgbox, field is empty
-	exitApp
-	}
-	send %FIELD_WORD_NAME%
-	send {enter}
-	send {Tab 4}
-	send {enter}
-	sleep 200
-	sendInput 2
-	sleep 200
-	send {enter}
-	send {escape}
-	sleep 200
-	send {escape}
-	send {escape}
+	checkForApi()  ;check for API KEYS
 	return
 }
 
-checkIfInputOK(){
-	sleep 500
-	WinGetText, text, A 
-	if(text="")
-	{
-		send {enter}
-	}
-	else  {
-	clearGlobalVariables()
-		return
-	}
-	return	
-}
 
 DownloadDictionarychromeExtension:
 Run, https://chrome.google.com/webstore/detail/google-dictionary-by-goog/mgijmajocgfcbeboacabfgobmjgjcoja?hl=en
