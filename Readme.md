@@ -29,7 +29,7 @@ press <key>`</key> to run the software.
 ### Prerequisites
 
 Anki: [Anki Download](https://apps.ankiweb.net)   
-AnkiConnect: [AnkiConnect Download]https://ankiweb.net/shared/info/2055492159
+AnkiConnect: [AnkiConnect Download](https://ankiweb.net/shared/info/2055492159)
  [Oxford Dictionary API](https://developer.oxforddictionaries.com)
 
 [Google Chrome Dictionary Extension](https://chrome.google.com/webstore/detail/google-dictionary-by-goog/mgijmajocgfcbeboacabfgobmjgjcoja?hl=en) - optional
